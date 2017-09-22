@@ -47,6 +47,7 @@ namespace HyperGeometricApp
             Console.WriteLine(r);
             Console.WriteLine(CumulHyGeo(40, 5, 3, 1));
             Console.WriteLine(MultHyGeo(40, 5, new int[]{ 3 }, new int[] { 1 }));
+            Console.WriteLine(CumulMultHyGeo(40, 5, new int[]{ 3 }, new int[] { 1 }));
         }
 
         /**
@@ -84,8 +85,44 @@ namespace HyperGeometricApp
         // Cumulative Multivariate Hypergeometric Distribution
         public static double CumulMultHyGeo(int N, int n, int[] K, int[] k)
         {
-            Console.WriteLine("KILL ME");
-            return 0;
+            // K[] can stay constant, 'k' will have to become int[i,j] where i is set that we are adding to the result
+            // Need to create k[i,j] such that sum of k[i,j] is <= n
+            // Then need to sum and return results of Multivariate Hypergeometric Distributions
+            Console.WriteLine("KILL ME NOW");
+            int[][] newK = new int[1][];
+            newK[0] = new int[0];
+            for (int i = 0; i < K.Length; i++)
+            {
+                newK = HelpMe(newK, n, K[i], k[i]);
+            }
+            double r = 0;
+            for (int i = 0; i < newK.Length; i++)
+            {
+                r += MultHyGeo(N, n, K, newK[i]);
+            }
+            foreach (int[] a in newK)
+            {
+                foreach (int x in a)
+                {
+                    Console.WriteLine(x);
+                }
+            }
+            return r;
+        }
+
+        public static int[][] HelpMe(int[][] c, int n, int K, int k)
+        {
+            int[,][] t = new int[c.Length, (K - k + 1)][];
+            for (int i = 0; i < c.Length; i++)
+            {
+                for (int j = 0; j + k <= K; j++)
+                {
+                    t[i, j] = new int[c[i].Length + 1];
+                    Array.Copy(c[i], t[i, j], c[i].Length);
+                    t[i, j][t[i, j].Length - 1] = k + j;
+                }
+            }
+            return t.Cast<int[]>().ToArray();
         }
 
         public static BigInteger BiDist(int n, int k)
